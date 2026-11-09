@@ -1,0 +1,10 @@
+.ward-filter{background:#fff;color:#243832;border:1px solid #c7d5ce;border-radius:6px;box-shadow:0 1px 5px #0004;width:210px;font:13px/1.4 Arial,sans-serif;max-width:calc(100vw - 80px)}
+.ward-filter summary{cursor:pointer;font-weight:bold;padding:9px 10px;color:#5b287c}
+.ward-filter-body{padding:0 10px 10px;display:grid;gap:5px;max-height:42vh;overflow:auto}
+.ward-filter select,.ward-filter button{font:inherit;width:100%;min-height:34px;border:1px solid #b9c9c2;border-radius:4px;background:#fff;color:#243832;padding:5px}
+.ward-filter button{cursor:pointer;margin-top:4px;background:#f1ebf6}
+.ward-filter small{font-size:11px;color:#52655d}
+.ward-label{background:#ffffffe6;border:0;box-shadow:none;color:#592379;font:bold 11px/1.2 Arial,sans-serif;padding:2px 4px;white-space:normal;text-align:center;max-width:120px;pointer-events:none}
+.ward-label:before{display:none}
+.studio-open .ward-filter-body{max-height:22vh}
+@media(max-width:650px){.ward-filter{width:170px}.ward-filter-body{max-height:27vh}.studio-open .ward-filter-body{max-height:16vh}}

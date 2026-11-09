@@ -40,3 +40,9 @@ If layer names, field names, categories, or styling change, the map code and tab
 The public URL stays the same. Preserve `index.html`, `css/attribute-studio.css`, `js/attribute-studio.js`, and all other existing map assets during a data-only update. Public visitors can download filtered CSVs but cannot save edits back to QGIS or GitHub through the table.
 
 GitHub upload reference: https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository
+
+## Ward boundaries (added 9 November 2026)
+
+The boundary layer uses `data/Wards.js`, `js/ward-boundaries.js`, and `css/ward-boundaries.css`. Preserve these files and the references to them in `index.html` during site-point updates. The LGA and ward dropdowns are populated automatically from the boundary data, and affect boundaries only. Labels use the `ward` value.
+
+To replace boundaries, export the new polygon layer to WGS84 (EPSG:4326), retaining `fid`, `lga`, and `ward`. Prepare `data/Wards.js` as `var json_Wards = <GeoJSON FeatureCollection>;`, with each feature also containing a `label_point` property in `[latitude, longitude]` order calculated from a point on the polygon surface. Keep valid Polygon/MultiPolygon geometry. Replace this data file and verify both filters, labels and boundary placement before publishing. A normal qgis2web polygon export needs adaptation to this format; do not merely rename it.

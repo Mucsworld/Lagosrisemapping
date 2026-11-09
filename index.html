@@ -42,6 +42,9 @@
         <script src="data/Womengatheringpoints_3.js"></script>
         <script src="data/Mengatheringpoints_4.js"></script>
         <script src="data/Markets_5.js"></script>
+        <script src="data/Wards.js"></script>
+        <script src="js/ward-boundaries.js"></script>
+        <link rel="stylesheet" href="css/ward-boundaries.css">
         <script>
         var highlightLayer;
         function highlightFeature(e) {
@@ -715,7 +718,9 @@
         });
         bounds_group.addLayer(layer_Markets_5);
         map.addLayer(layer_Markets_5);
+        var layer_Wards = createWardBoundaries(map);
         var overlaysTree = [
+            {label: 'Ward boundaries', layer: layer_Wards},
             {label: '<img src="legend/Markets_5.png" /> Markets', layer: layer_Markets_5},
             {label: '<img src="legend/Mengatheringpoints_4.png" /> Men gathering points', layer: layer_Mengatheringpoints_4},
             {label: '<img src="legend/Womengatheringpoints_3.png" /> Women gathering points', layer: layer_Womengatheringpoints_3},
