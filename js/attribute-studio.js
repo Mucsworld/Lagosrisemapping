@@ -11,7 +11,8 @@
     const text = value => value == null ? '' : String(value);
     const norm = value => text(value).trim().toLocaleLowerCase();
     const title = key => ({fid:'Record ID', lga:'LGA',site_type:'Site category'}[key] || key.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()));
-    sources.forEach(source => source.rows = source.layer.getLayers().map((marker,index)=>({marker,index,p:marker.feature.properties})));
+    sources.forEach(source => source.rows = (window.SiteScope?.sources.find(s=>s.layer===source.layer)?.markers||source.layer.getLayers()).map((marker,index)=>({marker,index,p:marker.feature.properties})));
+    const inScope=row=>!window.SiteScope||window.SiteScope.includes(row.marker);
     const panel = document.createElement('section');
     panel.id='attribute-studio';panel.hidden=true;panel.setAttribute('aria-labelledby','studio-heading');
     panel.innerHTML = '<header><div><h2 id="studio-heading">Attribute Table Studio</h2><div class="studio-caption">Web viewer · Click a site to locate it on the map</div></div><button id="studio-close" type="button" aria-label="Close attribute table">Close</button></header>'+
@@ -19,6 +20,7 @@
         '<div class="studio-table-wrap" tabindex="0" aria-label="Scrollable site attributes"><table><thead></thead><tbody></tbody></table></div>'+
         '<footer><span id="studio-count" role="status" aria-live="polite"></span><div class="studio-paging"><button id="studio-prev" type="button">Previous</button><span id="studio-page"></span><button id="studio-next" type="button">Next</button></div></footer>';
     document.body.appendChild(panel);
+    const scopeNote=document.createElement('div');scopeNote.id='studio-scope';panel.querySelector('header').after(scopeNote);
     const $=id=>document.getElementById(id), layerSelect=$('studio-layer'), search=$('studio-search');
     const filterIds=['lga','ward','community'], filters=filterIds.map(k=>$('studio-'+k));
     const tableHead=panel.querySelector('thead'), tableBody=panel.querySelector('tbody');
@@ -29,11 +31,11 @@
     let launch;
     control.onAdd=function(){const container=L.DomUtil.create('div','studio-control');launch=document.createElement('button');launch.type='button';launch.className='studio-launch';launch.textContent='Attribute Table Studio';launch.setAttribute('aria-controls',panel.id);launch.setAttribute('aria-expanded','false');launch.onclick=()=>setOpen(panel.hidden);container.appendChild(launch);L.DomEvent.disableClickPropagation(container);return container;};
     control.addTo(map);
-    function setOpen(open){panel.hidden=!open;document.body.classList.toggle('studio-open',open);launch.setAttribute('aria-expanded',String(open));map.invalidateSize({pan:false});if(open)layerSelect.focus();else launch.focus();}
+    function setOpen(open){panel.hidden=!open;document.body.classList.toggle('studio-open',open);launch.setAttribute('aria-expanded',String(open));map.invalidateSize({pan:true,animate:false});if(open)layerSelect.focus();else launch.focus();}
     $('studio-close').onclick=()=>setOpen(false);
     panel.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setOpen(false);}});
     function rebuildFilters(){
-        let candidates=source.rows;
+        let candidates=source.rows.filter(inScope);
         filters.forEach((select,i)=>{
             const previous=select.value, values=new Map();
             candidates.forEach(row=>{const value=text(row.p[filterIds[i]]).trim();if(value)values.set(norm(value),value);});
@@ -46,7 +48,9 @@
     function refresh(resetPage=true){
         if(resetPage)page=0;
         const query=norm(search.value);
-        filtered=source.rows.filter(row=>filters.every((select,i)=>!select.value||norm(row.p[filterIds[i]])===select.value)&&(!query||Object.values(row.p).some(value=>norm(value).includes(query))));
+        filtered=source.rows.filter(row=>inScope(row)&&filters.every((select,i)=>!select.value||norm(row.p[filterIds[i]])===select.value)&&(!query||Object.values(row.p).some(value=>norm(value).includes(query))));
+        const area=window.boundarySelection;
+        scopeNote.textContent=area?.active?'Boundary area: '+[area.lga,area.ward].filter(Boolean).join(' / ')+' · Table filters narrow this area further.':'Boundary area: all sites';
         if(sortKey)filtered.sort((a,b)=>direction*collator.compare(text(a.p[sortKey]),text(b.p[sortKey]))||a.index-b.index);
         page=Math.max(0,Math.min(page,Math.ceil(filtered.length/pageSize)-1));
         render();
@@ -78,5 +82,7 @@
     $('studio-prev').onclick=()=>{page--;refresh(false);};$('studio-next').onclick=()=>{page++;refresh(false);};
     function csvCell(value){let str=text(value);if(/^[\s]*[=+\-@]/.test(str)||/^[\t\r\n]/.test(str))str="'"+str;return '"'+str.replace(/"/g,'""')+'"';}
     $('studio-csv').onclick=()=>{const csv='\ufeff'+[columns.map(title),...filtered.map(row=>columns.map(key=>row.p[key]))].map(row=>row.map(csvCell).join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='lagos-rise-'+source.name.toLowerCase().replace(/\s+/g,'-')+'-filtered.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+    map.on('sitescopechange',()=>{selected=null;if(selectionRing){map.removeLayer(selectionRing);selectionRing=null;}filters.forEach(s=>s.value='');rebuildFilters();refresh();});
     selectSource();
 })();
+

@@ -2,7 +2,7 @@
 
 Public map: https://mucsworld.github.io/Lagosrisemapping/
 
-The map and web Attribute Table Studio read the same published data files. Updating those files updates both. Saving edits in QGIS alone does not update the website. The web panel is a view-only custom viewer; the desktop QGIS plugin itself is not running in the browser.
+For the 12 November review version, regenerate data/SiteDetails.js alongside the five point files whenever points or ward boundaries change. It stores the display labels and spatial ward links keyed by record ID. See REVIEW.md. The earlier five-file-only instructions below require this additional step. The map and web Attribute Table Studio read the same published data files. Updating those files updates both. Saving edits in QGIS alone does not update the website. The web panel is a view-only custom viewer; the desktop QGIS plugin itself is not running in the browser.
 
 ## 1. Prepare and check the new data in QGIS
 
@@ -43,6 +43,7 @@ GitHub upload reference: https://docs.github.com/en/repositories/working-with-fi
 
 ## Ward boundaries (added 9 November 2026)
 
-The boundary layer uses `data/Wards.js`, `js/ward-boundaries.js`, and `css/ward-boundaries.css`. Preserve these files and the references to them in `index.html` during site-point updates. The LGA and ward dropdowns are populated automatically from the boundary data, and affect boundaries only. Labels use the `ward` value.
+The boundary layer uses `data/Wards.js`, `js/ward-boundaries.js`, and `css/ward-boundaries.css`. Preserve these files and the references to them in `index.html` during site-point updates. The LGA and ward dropdowns are populated automatically from the boundary data and filter boundaries, site points, and the attribute table together. Labels use the `ward` value.
 
 To replace boundaries, export the new polygon layer to WGS84 (EPSG:4326), retaining `fid`, `lga`, and `ward`. Prepare `data/Wards.js` as `var json_Wards = <GeoJSON FeatureCollection>;`, with each feature also containing a `label_point` property in `[latitude, longitude]` order calculated from a point on the polygon surface. Keep valid Polygon/MultiPolygon geometry. Replace this data file and verify both filters, labels and boundary placement before publishing. A normal qgis2web polygon export needs adaptation to this format; do not merely rename it.
+
