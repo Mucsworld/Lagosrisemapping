@@ -233,6 +233,7 @@
 
         function style_Motorparks_1_0() {
             return {
+                shape: 'triangle',
                 pane: 'pane_Motorparks_1',
                 radius: 6.6,
                 opacity: 1,
@@ -719,13 +720,19 @@
         bounds_group.addLayer(layer_Markets_5);
         map.addLayer(layer_Markets_5);
         var layer_Wards = createWardBoundaries(map);
+        function legendSymbol(style) {
+            var r=style.radius,lo=10-r,hi=10+r,shape=style.shape||'circle';
+            var geometry=shape==='circle'?'<circle cx="10" cy="10" r="'+r+'"/>':
+                '<path d="'+(shape==='square'?'M'+lo+' '+lo+' H'+hi+' V'+hi+' H'+lo+' Z':shape==='diamond'?'M'+lo+' 10 L10 '+lo+' L'+hi+' 10 L10 '+hi+' Z':'M'+lo+' '+hi+' L10 '+lo+' L'+hi+' '+hi+' Z')+'"/>';
+            return '<svg class="site-legend-symbol" data-shape="'+shape+'" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="vertical-align:middle" fill="'+style.fillColor+'" stroke="'+style.color+'" stroke-width="'+style.weight+'">'+geometry+'</svg> ';
+        }
         var overlaysTree = [
-            {label: 'Ward boundaries', layer: layer_Wards},
-            {label: '<img src="legend/Markets_5.png" /> Markets', layer: layer_Markets_5},
-            {label: '<img src="legend/Mengatheringpoints_4.png" /> Men gathering points', layer: layer_Mengatheringpoints_4},
-            {label: '<img src="legend/Womengatheringpoints_3.png" /> Women gathering points', layer: layer_Womengatheringpoints_3},
-            {label: '<img src="legend/Communityleaderhouses_2.png" /> Community leader houses', layer: layer_Communityleaderhouses_2},
-            {label: '<img src="legend/Motorparks_1.png" /> Motor parks', layer: layer_Motorparks_1},
+            {label: '<svg width="20" height="20" aria-hidden="true" style="vertical-align:middle"><path d="M2 10H18" stroke="#6b3294" stroke-width="3"/></svg> Ward boundaries', layer: layer_Wards},
+            {label: legendSymbol(style_Markets_5_0())+'Markets', layer: layer_Markets_5},
+            {label: legendSymbol(style_Mengatheringpoints_4_0())+'Men gathering points', layer: layer_Mengatheringpoints_4},
+            {label: legendSymbol(style_Womengatheringpoints_3_0())+'Women gathering points', layer: layer_Womengatheringpoints_3},
+            {label: legendSymbol(style_Communityleaderhouses_2_0())+'Community leader houses', layer: layer_Communityleaderhouses_2},
+            {label: legendSymbol(style_Motorparks_1_0())+'Motor parks', layer: layer_Motorparks_1},
             {label: "OpenStreetMap", layer: layer_OpenStreetMap_0, radioGroup: 'bm' },
             {label: "Satellite imagery", layer: layer_Satellite, radioGroup: 'bm' },]
         var lay = L.control.layers.tree(null, overlaysTree,{
