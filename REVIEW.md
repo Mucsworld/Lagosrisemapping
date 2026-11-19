@@ -1,31 +1,11 @@
-# Map update — 17 November 2026
+# Data notes — 19 November 2026
 
-This update was reviewed locally and approved for publication to the existing GitHub Pages map.
+All 7,244 community rows and 356 facility rows have usable coordinates. Community sites use gps-Latitude/gps-Longitude; facilities use latitude/longitude. The CSVs have no fid, so IDs are generated from row order separately for each source. Rebuild spatial links whenever replacing records.
 
-## Points
+Community label rules remain unchanged. Facility labels use Facility_name, published as facility_name. Existing public community fields are retained; facility fields are limited to ID, name, level, LGA, ward and health district. Source CSVs are not uploaded wholesale.
 
-6,927 records replace the previous dataset: 612 markets, 2,341 men gathering points, 968 women gathering points, 2,550 community leader houses and 456 motor parks. Existing published attributes are retained. The new display labels and spatial links are stored separately in `data/SiteDetails.js`.
+Spatial filters use point-in-polygon membership. Original reported LGA/ward text is preserved. Twelve community sites and one facility (record ID 32) lie outside the supplied polygons and remain visible when all locations are shown. Coordinates were not moved or replaced.
 
-## Labels
+Facility symbols and legends share an SVG medical cross and category colours. Facility labels have white text and a three-pixel outline in the category colour; they receive priority when labels overlap. Existing site symbols, ward geometry, basemaps and controls are retained.
 
-- Markets: `market_name`.
-- Men gathering: `men_location_name — men_gathering_type`.
-- Community leaders: `leader_title`; an exact, case-insensitive `other` is replaced with `leader_title_other`.
-- Women gathering: `women_group_name — women_group_type`; an exact, case-insensitive `other` in the name is replaced with `women_group_type_other`, as requested.
-- Motor parks: `community`.
-
-Labels appear at the zoom needed to fit the site's ward in the map viewport (minimum zoom 13). Sites outside the boundaries use zoom 15. Labels are suppressed where they overlap; zooming closer reveals more labels. Existing popup details remain available by clicking a point.
-
-## Linked filters
-
-The ward panel filters boundary polygons, all five site layers and Attribute Table Studio together. Membership is calculated by intersecting each point with the supplied ward polygons, rather than matching reported text fields. The original reported LGA/ward values in the site table are preserved and may differ from the geographic boundary assignment. Additional table search and filters narrow the selected area. CSV export respects both the boundary selection and table filters. Resetting the ward panel restores all sites and boundaries.
-
-Twelve records are outside the polygons: Markets IDs 205, 343; Men gathering IDs 1291, 1294, 2332; Women gathering ID 511; Community leaders IDs 710, 822, 1074, 1087, 1090, 1377. They remain visible in the unfiltered map/table. No point coordinates were moved.
-
-Ward outlines increased from 2 to 3 pixels. Ward geometry, colours, basemaps and the remaining map controls are preserved.
-
-## Future data updates
-
-Point replacements must now also regenerate `data/SiteDetails.js` so labels and spatial links match the new record IDs. Replacing the five data files alone is insufficient. The local preparation script is `prepare_nov17_data.py`; it reads the source GeoPackage without modifying it. Its source path and target folder are explicit at the top. Review geometry, labels and unmatched records each time before publishing.
-
-
+The local preparation script prepare_nov19_data.py validates coordinates and regenerates the six point files plus SiteDetails.js from the CSVs and existing ward geometry.

@@ -9,6 +9,7 @@
         {name:'Motor parks', layer:layer_Motorparks_1, nameField:'community'}
     ];
     const text = value => value == null ? '' : String(value);
+    sources.push(...healthFacilitySources.map(s=>({name:s.title,layer:s.layer,nameField:'facility_name'})));
     const norm = value => text(value).trim().toLocaleLowerCase();
     const title = key => ({fid:'Record ID', lga:'LGA',site_type:'Site category'}[key] || key.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()));
     sources.forEach(source => source.rows = (window.SiteScope?.sources.find(s=>s.layer===source.layer)?.markers||source.layer.getLayers()).map((marker,index)=>({marker,index,p:marker.feature.properties})));

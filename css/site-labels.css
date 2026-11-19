@@ -1,3 +1,7 @@
 .site-label{background:#fffffff0;border:1px solid #becbc5;border-radius:3px;box-shadow:0 1px 3px #0003;color:#172e25;font:12px/18px Arial,sans-serif;padding:2px 5px;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .site-label:before{display:none}
 #studio-scope{font-size:12px;color:#5b287c;padding:5px 10px;background:#f5eff8}
+.health-symbol{background:transparent;border:0}
+.leaflet-control-layers svg{vertical-align:middle}
+.facility-label{background:transparent;border:0;box-shadow:none;overflow:visible;max-width:280px;font-weight:bold}
+.facility-label span{color:white;paint-order:stroke fill;-webkit-text-stroke:3px var(--facility-color);text-shadow:1px 1px 2px #0008}

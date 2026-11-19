@@ -2,6 +2,7 @@
     'use strict';
     const sources=[['Markets_5',layer_Markets_5],['Mengatheringpoints_4',layer_Mengatheringpoints_4],['Womengatheringpoints_3',layer_Womengatheringpoints_3],['Communityleaderhouses_2',layer_Communityleaderhouses_2],['Motorparks_1',layer_Motorparks_1]].map(([name,layer])=>({name,layer,markers:layer.getLayers()}));
     const wardBounds=new Map(json_Wards.features.map(f=>[f.properties.fid,L.geoJSON(f).getBounds()]));
+    sources.push(...healthFacilitySources.map(s=>({...s,markers:s.layer.getLayers()})));
     sources.forEach(s=>s.markers.forEach(m=>m.siteDetails=json_SiteDetails[s.name][m.feature.properties.fid]));
     let selected=new Set(),active=false;
     const includes=marker=>!active||marker.siteDetails.wards.some(id=>selected.has(id));
@@ -16,7 +17,7 @@
         const zoom=map.getZoom();if(zoom<13)return;
         const viewport=map.getBounds(),size=map.getSize(),boxes=[];
         const thresholds=new Map([...wardBounds].map(([id,b])=>[id,Math.max(13,map.getBoundsZoom(b,false,L.point(50,50)))]));
-        sources.filter(s=>map.hasLayer(s.layer)).forEach(s=>s.markers.forEach(marker=>{
+        [...sources].sort((a,b)=>Number(!!b.health)-Number(!!a.health)).filter(s=>map.hasLayer(s.layer)).forEach(s=>s.markers.forEach(marker=>{
             const meta=marker.siteDetails,point=marker.getLatLng();
             if(!includes(marker)||!meta.label||!viewport.contains(point))return;
             const relevant=meta.wards.filter(id=>!active||selected.has(id));
@@ -28,7 +29,8 @@
             if(boxes.some(b=>rect.x<b.x+b.w+5&&rect.x+rect.w+5>b.x&&rect.y<b.y+b.h+3&&rect.y+rect.h+3>b.y))return;
             boxes.push(rect);
             const text=document.createElement('span');text.textContent=meta.label;
-            L.tooltip({pane:'siteLabels',permanent:true,direction:'right',offset:[10,0],className:'site-label',interactive:false}).setLatLng(point).setContent(text).addTo(labels);
+            if(s.health){text.style.setProperty('--facility-color',s.color);}
+            L.tooltip({pane:'siteLabels',permanent:true,direction:'right',offset:[10,0],className:s.health?'site-label facility-label':'site-label',interactive:false}).setLatLng(point).setContent(text).addTo(labels);
         }));
     }
     function apply(){
@@ -36,7 +38,7 @@
         let count=0;
         sources.forEach(s=>s.markers.forEach(m=>{const keep=includes(m);if(keep){count++;if(!s.layer.hasLayer(m))s.layer.addLayer(m);}else if(s.layer.hasLayer(m))s.layer.removeLayer(m);}));
         map.closePopup();
-        document.querySelector('#boundary-sites').textContent=count.toLocaleString()+' matching sites';
+        document.querySelector('#boundary-sites').textContent=count.toLocaleString()+' matching sites and facilities';
         map.fire('sitescopechange');scheduleLabels();
     }
     map.on('boundaryfilterchange',apply);

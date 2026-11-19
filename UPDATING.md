@@ -1,5 +1,11 @@
 # Updating the Lagos RISE map
 
+## Current CSV workflow (19 November 2026)
+
+Use the local `prepare_nov19_data.py` script with the five community CSVs and facility CSV. Its source paths and target folder are explicit. Community coordinates use `gps-Latitude`/`gps-Longitude`; facility coordinates use `latitude`/`longitude`. Rebuild the affected point files and `data/SiteDetails.js` together because IDs are assigned by row order. Review the validation report before publishing.
+
+Facilities use `data/HealthFacilities.js` and `js/health-facilities.js`. PHC, Secondary and Tertiary colours are specified in the latter; a new level needs a colour choice or it receives a grey fallback. Preserve all custom scripts, styles and index when updating data. The older qgis2web instructions below are background guidance: a plain export cannot regenerate the custom label metadata and spatial links.
+
 Public map: https://mucsworld.github.io/Lagosrisemapping/
 
 For the 12 November review version, regenerate data/SiteDetails.js alongside the five point files whenever points or ward boundaries change. It stores the display labels and spatial ward links keyed by record ID. See REVIEW.md. The earlier five-file-only instructions below require this additional step. The map and web Attribute Table Studio read the same published data files. Updating those files updates both. Saving edits in QGIS alone does not update the website. The web panel is a view-only custom viewer; the desktop QGIS plugin itself is not running in the browser.

@@ -43,6 +43,8 @@
         <script src="data/Mengatheringpoints_4.js"></script>
         <script src="data/Markets_5.js"></script>
         <script src="data/Wards.js"></script>
+        <script src="data/HealthFacilities.js"></script>
+        <script src="js/health-facilities.js"></script>
         <script src="js/ward-boundaries.js"></script>
         <link rel="stylesheet" href="css/ward-boundaries.css">
         <script>
@@ -720,6 +722,7 @@
         bounds_group.addLayer(layer_Markets_5);
         map.addLayer(layer_Markets_5);
         var layer_Wards = createWardBoundaries(map);
+        var healthFacilitySources = createHealthFacilities(map);
         function legendSymbol(style) {
             var r=style.radius,lo=10-r,hi=10+r,shape=style.shape||'circle';
             var geometry=shape==='circle'?'<circle cx="10" cy="10" r="'+r+'"/>':
@@ -727,6 +730,7 @@
             return '<svg class="site-legend-symbol" data-shape="'+shape+'" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="vertical-align:middle" fill="'+style.fillColor+'" stroke="'+style.color+'" stroke-width="'+style.weight+'">'+geometry+'</svg> ';
         }
         var overlaysTree = [
+            {label: 'Health facilities', children: healthFacilitySources.map(s=>({label:s.legend,layer:s.layer}))},
             {label: '<svg width="20" height="20" aria-hidden="true" style="vertical-align:middle"><path d="M2 10H18" stroke="#6b3294" stroke-width="3"/></svg> Ward boundaries', layer: layer_Wards},
             {label: legendSymbol(style_Markets_5_0())+'Markets', layer: layer_Markets_5},
             {label: legendSymbol(style_Mengatheringpoints_4_0())+'Men gathering points', layer: layer_Mengatheringpoints_4},
